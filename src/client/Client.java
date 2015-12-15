@@ -9,6 +9,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * Classe faisant l'abstraction  d'un client gérant la connexion avec le serveur
+ */
 public class Client
 {
 	private Socket socket; // Création d'une variable socket
@@ -17,6 +20,11 @@ public class Client
 	private String adresseServeur;  // Adresse IPv4 du serveur
 	private int port;   // Port de connexion au serveur
 
+	/**
+	 * Constructeur par défaut
+	 * @param adresseServeur L'adresse IP du serveur
+	 * @param port Le numéro de port sur lequel le serveur écoute.
+	 */
 	public Client(String adresseServeur, int port)
 	{
 		this.adresseServeur = adresseServeur;
@@ -31,6 +39,11 @@ public class Client
 		}
 	}
 
+	/**
+	 * Envoie une chaîne de caractère au serveur
+	 * @param message Message pour le serveur
+	 * @return booléen si le message a été ou non envoyé
+	 */
 	public boolean envoiMessage(String message)
 	{
 		try
@@ -47,6 +60,10 @@ public class Client
 		return true;
 	}
 
+	/**
+	 * Lecture d'une chaîne de caractère envoyé par le serveur
+	 * @return chaîne de caractère du message reçu
+	 */
 	public String lectureMessage()
 	{
 		try
@@ -61,6 +78,9 @@ public class Client
 		}
 	}
 
+	/**
+	 * Ferme le socket ouvert avec le serveur
+	 */
 	public void fermetureClient()
 	{
 		try
@@ -73,6 +93,10 @@ public class Client
 		}
 	}
 
+	/**
+	 * Méthode main du programme
+	 * @param args Arguments à ajouter pour le lancement du programme
+	 */
 	public static void main(String[] args)
 	{
 		Client c = new Client("192.168.0.94", 2010);
