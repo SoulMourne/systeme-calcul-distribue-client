@@ -1,6 +1,7 @@
 package client;
 
 import java.io.BufferedReader;
+import java.io.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -25,8 +26,28 @@ public class Client
 	 * @param adresseServeur L'adresse IP du serveur
 	 * @param port Le numéro de port sur lequel le serveur écoute.
 	 */
+	public Client()
+	{
+		this.adresseServeur = getIPServeur();
+		this.port = getPortServeur();
+		try
+		{
+			socket = new Socket(this.adresseServeur, this.port);   // Ouverture de la socket
+		}
+		catch (IOException e) //Si le serveur n'est pas trouvé
+		{
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Constructeur avec spécification de l'adresse et du port
+	 * @param adresseServeur L'adresse IP du serveur
+	 * @param port Le numéro de port sur lequel le serveur écoute.
+	 */
 	public Client(String adresseServeur, int port)
 	{
+		System.out.println(getIPServeur());
 		this.adresseServeur = adresseServeur;
 		this.port = port;
 		try
@@ -92,6 +113,63 @@ public class Client
 			ex.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Retourne l'adresse IP du serveur du fichier de configuration
+	 * @return adresse IP du serveur
+	 */
+	public String getIPServeur()
+	{
+		String fileName = "conf.txt";
+		String line = null;
+
+		try {
+			FileReader fileReader = new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+			while((line = bufferedReader.readLine()) != null) {
+		        	return line;
+			}   
+			bufferedReader.close();         
+		}
+		catch(FileNotFoundException ex) {
+		    System.out.println("Unable to open file '" + fileName + "'");
+		}
+		catch(IOException ex) {
+		    System.out.println("Error reading file '" + fileName + "'");                  
+		}
+		return "";
+	}
+
+	/**
+	 * Retourne le port socket du serveur du fichier de configuration
+	 * @return port socket du serveur
+	 */
+	public int getPortServeur()
+	{
+		String fileName = "conf.txt";
+		String line = null;
+
+		try {
+			FileReader fileReader = new FileReader(fileName);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+			int i = 0;
+			while((line = bufferedReader.readLine()) != null) {
+		        	if (i == 1)
+					return Integer.parseInt(line);
+				i++;
+			}   
+			bufferedReader.close();         
+		}
+		catch(FileNotFoundException ex) {
+		    System.out.println("Unable to open file '" + fileName + "'");
+		}
+		catch(IOException ex) {
+		    System.out.println("Error reading file '" + fileName + "'");                  
+		}
+		return 0;
+	}
 
 	/**
 	 * Méthode main du programme
@@ -99,7 +177,8 @@ public class Client
 	 */
 	public static void main(String[] args)
 	{
-		Client c = new Client("192.168.0.94", 2010);
+		//Client c = new Client("192.168.0.99", 2009);
+		Client c = new Client();
 		if (c.envoiMessage("Bonjour, je suis un client."))
 			System.out.println("Message du serveur : " + c.lectureMessage());
 		else
