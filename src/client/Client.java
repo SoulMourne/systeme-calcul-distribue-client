@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Classe faisant l'abstraction  d'un client gérant la connexion avec le serveur
@@ -46,7 +48,7 @@ public class Client
             }
             catch (IOException e) //Si le serveur n'est pas trouvé
             {
-                    System.out.println(e.getMessage());
+                    System.err.println(e.getMessage());
             }
     }
 
@@ -65,7 +67,7 @@ public class Client
             }
             catch (IOException e) //Si le serveur n'est pas trouvé
             {
-                    System.out.println(e.getMessage());
+                    System.err.println(e.getMessage());
             }
     }
 
@@ -84,7 +86,7 @@ public class Client
             }
             catch (IOException e)   //En cas d'erreur
             {
-                    System.out.println(e.getMessage());
+                    System.err.println(e.getMessage());
                     return false;
             }
             return true;
@@ -103,7 +105,7 @@ public class Client
             }
             catch (IOException e)   //En cas d'erreur
             {
-                    System.out.println(e.getMessage());
+                    System.err.println(e.getMessage());
                     return null;
             }
     }
@@ -119,7 +121,7 @@ public class Client
             }
             catch (IOException ex)  //En cas d'erreur
             {
-                    System.out.println(ex.getMessage());
+                    System.err.println(ex.getMessage());
             }
     }
 
@@ -129,25 +131,25 @@ public class Client
      */
     public String getIPServeur()
     {
-            String fileName = "conf.txt";
-            String line = null;
+        String fileName = "conf.txt";
+        String line = null;
 
-            try {
-                    FileReader fileReader = new FileReader(fileName);
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+        try {
+                FileReader fileReader = new FileReader(fileName);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-                    while((line = bufferedReader.readLine()) != null) {
-                            return line;
-                    }   
-                    bufferedReader.close();         
-            }
-            catch(FileNotFoundException ex) {
-                System.out.println("Unable to open file '" + fileName + "'");
-            }
-            catch(IOException ex) {
-                System.out.println("Error reading file '" + fileName + "'");                  
-            }
-            return "";
+                while((line = bufferedReader.readLine()) != null) {
+                        return line;
+                }   
+                bufferedReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.err.println("Unable to open file '" + fileName + "'");
+        }
+        catch(IOException ex) {
+            System.err.println("Error reading file '" + fileName + "'");                  
+        }
+        return "";
     }
 
     /**
@@ -156,28 +158,45 @@ public class Client
      */
     public int getPortServeur()
     {
-            String fileName = "conf.txt";
-            String line = null;
+        String fileName = "conf.txt";
+        String line = null;
 
-            try {
-                    FileReader fileReader = new FileReader(fileName);
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+        try {
+            FileReader fileReader = new FileReader(fileName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-                    int i = 0;
-                    while((line = bufferedReader.readLine()) != null) {
-                            if (i == 1)
-                                    return Integer.parseInt(line);
-                            i++;
-                    }   
-                    bufferedReader.close();         
-            }
-            catch(FileNotFoundException ex) {
-                System.out.println("Unable to open file '" + fileName + "'\n"+ex.getMessage());
-            }
-            catch(IOException ex) {
-                System.out.println("Error reading file '" + fileName + "'\n"+ex.getMessage());                  
-            }
-            return 0;
+            int i = 0;
+            while((line = bufferedReader.readLine()) != null) {
+                    if (i == 1)
+                            return Integer.parseInt(line);
+                    i++;
+            }   
+            bufferedReader.close();         
+        }
+        catch(FileNotFoundException ex) {
+            System.err.println("Unable to open file '" + fileName + "'\n"+ex.getMessage());
+        }
+        catch(IOException ex) {
+            System.err.println("Error reading file '" + fileName + "'\n"+ex.getMessage());                  
+        }
+        return 0;
+    }
+    
+    /**
+     * Lit l'objet envoyé et reçu par le socket et le renvoie
+     * @return Objet reçu via le socket ou null en cas d'erreur
+     */
+    public Object lectureObjet()
+    {
+        Object o = null; //Initialise l'objet à null
+        try {
+            ObjectInputStream entree = new ObjectInputStream(this.socket.getInputStream()); //Permet de lire l'objet provenant du socket
+            o = entree.readObject();    //Lit l'objet provenant du socket et le stocke dans o
+        } catch (IOException | ClassNotFoundException ex) {
+            System.err.println(ex.getMessage());
+            return o; //Renvoie un objet null en cas d'erreur
+        }
+        return o; //Renvoie l'objet reçu par le socket
     }
 
     /**
@@ -186,12 +205,14 @@ public class Client
      */
     public static void main(String[] args)
     {
-            Client c = new Client("127.0.0.1", 2009);
-            //Client c = new Client();
-            if (c.envoiMessage("Bonjour, je suis un client."))
-                    System.out.println("Message du serveur : " + c.lectureMessage());
-            else
-                    System.out.println("Erreur lors de l'envoie du message");
-            c.fermetureClient();
+        Client c = new Client("192.168.0.98", 2009);
+        //Client c = new Client();
+        if (c.envoiMessage("Bonjour, je suis un client."))
+                System.out.println("Message du serveur : " + c.lectureMessage());
+        else
+                System.out.println("Erreur lors de l'envoie du message");
+        Integer entier = (Integer)c.lectureObjet();
+        System.out.println(entier);
+        c.fermetureClient();
     }
 }
