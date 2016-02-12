@@ -5,26 +5,8 @@ import java.io.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-public class Client {
-    public static void main(String[] zero) {
-        Socket socket;  //Création d'une variable socket
-        try {
-            socket = new Socket(InetAddress.getLocalHost(),2009);  //Envoi d'un socket à l'adresse LocalHost sur le port 2009
-            socket.close(); //Fermeture du socket
-        }catch (UnknownHostException e) //Si le serveur n'est pas trouvé
-        {
-            System.out.println(e.getMessage());
-        }catch (IOException e) 
-        {
-            System.out.println(e.getMessage());
-        }
-    }
-}
 /**
  * Classe faisant l'abstraction  d'un client gérant la connexion avec le serveur
  */
@@ -62,7 +44,6 @@ public class Client
 	 */
 	public Client(String adresseServeur, int port)
 	{
-		System.out.println(getIPServeur());
 		this.adresseServeur = adresseServeur;
 		this.port = port;
 		try
@@ -192,8 +173,8 @@ public class Client
 	 */
 	public static void main(String[] args)
 	{
-		//Client c = new Client("192.168.0.99", 2009);
-		Client c = new Client();
+		Client c = new Client("127.0.0.1", 2009);
+		//Client c = new Client();
 		if (c.envoiMessage("Bonjour, je suis un client."))
 			System.out.println("Message du serveur : " + c.lectureMessage());
 		else
