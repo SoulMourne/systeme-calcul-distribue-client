@@ -1,13 +1,15 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.*;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 
 /**
  * Classe faisant l'abstraction  d'un client gérant la connexion avec le serveur
@@ -199,20 +201,55 @@ public class Client
         return o; //Renvoie l'objet reçu par le socket
     }
 
+    public void receptionFichier(Socket source, File fichier)
+    {
+
+            InputStream entree = null;
+            OutputStream sortie = null;
+
+            try {
+                entree = socket.getInputStream();
+                sortie = new FileOutputStream(fichier);
+                byte[] bytes = new byte[16*1024];
+                int count;
+                while ((count = entree.read(bytes)) > 0) 
+                {
+                    sortie.write(bytes, 0, count);
+                }
+                entree.close();
+                sortie.close();
+            } catch (FileNotFoundException ex) {
+                System.err.println(ex.getMessage());
+            } catch (IOException ex) {
+                System.err.println(ex.getMessage());
+            }
+    }
+    
     /**
      * Méthode main du programme
      * @param args Arguments à ajouter pour le lancement du programme
      */
     public static void main(String[] args)
     {
-        Client c = new Client("192.168.0.98", 2009);
-        //Client c = new Client();
-        if (c.envoiMessage("Bonjour, je suis un client."))
+        
+            Client c = new Client("127.0.0.1", 5000);
+            //Client c = new Client();
+            if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
-        else
+            else
                 System.out.println("Erreur lors de l'envoie du message");
-        Integer entier = (Integer)c.lectureObjet();
-        System.out.println(entier);
-        c.fermetureClient();
+            /*File f = (File)c.lectureObjet();
+            File dest = new File("src/test.txt");
+            //System.out.println(f.toString());
+            if (dest.exists())
+                dest.delete();
+            try {
+                dest.createNewFile();
+            } catch (IOException e)
+            {
+                System.err.println(e.getMessage());
+            }
+            c.receptionFichier(c.socket, dest);*/
+            c.fermetureClient();
     }
 }
