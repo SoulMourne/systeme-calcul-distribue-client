@@ -13,10 +13,10 @@ public class Client {
             socket.close(); //Fermeture du socket
         }catch (UnknownHostException e) //Si le serveur n'est pas trouvé
         {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }catch (IOException e) 
         {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }
