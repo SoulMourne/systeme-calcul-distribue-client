@@ -219,9 +219,9 @@ public class Client
                 entree.close();
                 sortie.close();
             } catch (FileNotFoundException ex) {
-                System.err.println(ex.getMessage());
+                System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
             } catch (IOException ex) {
-                System.err.println(ex.getMessage());
+                System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
             }
     }
     
@@ -232,14 +232,14 @@ public class Client
     public static void main(String[] args)
     {
         
-            Client c = new Client("127.0.0.1", 5000);
+            Client c = new Client("192.168.0.102", 5000);
             //Client c = new Client();
             if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
             else
                 System.out.println("Erreur lors de l'envoie du message");
-            /*File f = (File)c.lectureObjet();
-            File dest = new File("src/test.txt");
+            //File f = (File)c.lectureObjet();
+            File dest = new File("test.txt");
             //System.out.println(f.toString());
             if (dest.exists())
                 dest.delete();
@@ -249,7 +249,8 @@ public class Client
             {
                 System.err.println(e.getMessage());
             }
-            c.receptionFichier(c.socket, dest);*/
+            c.receptionFichier(c.socket, dest);
+            System.out.println("Reception done");
             c.fermetureClient();
     }
 }
