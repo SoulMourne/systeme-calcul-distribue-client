@@ -203,19 +203,24 @@ public class Client
 
     /**
      * Le client se met à l'écoute du socket et se prépare a recevoir et copier un fichier
-     * @param source le socket à écouter pour la reception du fichier
      * @param fichier le fichier de destination
      */
-    public void receptionFichier(Socket source, File fichier)
+    public void receptionFichier(File fichier)
     {
+        //int fileSize = (int)this.lectureObjet();
+        //System.out.println(fileSize);
+        int byteSize = 16*1024;
         try {
-           InputStream entree = socket.getInputStream();
-           OutputStream sortie = new FileOutputStream(fichier);
+            InputStream entree = socket.getInputStream();
+            OutputStream sortie = new FileOutputStream(fichier);
             byte[] bytes = new byte[16*1024];
             int count;
             while ((count = entree.read(bytes)) > 0) 
             {
                 sortie.write(bytes, 0, count);
+                /*long byteLeft = fileSize - count;
+                if (byteLeft < byteSize)
+                    bytes = new byte[(int)byteLeft];*/
             }
             entree.close();
             sortie.close();
@@ -233,14 +238,23 @@ public class Client
     public static void main(String[] args)
     {
         
-            Client c = new Client("192.168.0.102", 5000);
+            Client c = new Client("127.0.0.1", 5000);
             //Client c = new Client();
             if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
             else
                 System.out.println("Erreur lors de l'envoie du message");
+            
+            //System.out.println((int)c.lectureObjet());
+            
+            for (int i =0 ; i<10; i++)
+            {
+                int j = (int)c.lectureObjet();
+                System.out.println(j);
+            }
+            
             //File f = (File)c.lectureObjet();
-            File dest = new File("test.txt");
+            /*File dest = new File("src/test.txt");
             //System.out.println(f.toString());
             if (dest.exists())
                 dest.delete();
@@ -250,8 +264,8 @@ public class Client
             {
                 System.err.println(e.getMessage());
             }
-            c.receptionFichier(c.socket, dest);
+            c.receptionFichier(dest);
             System.out.println("Reception done");
-            c.fermetureClient();
+            c.fermetureClient();*/
     }
 }
