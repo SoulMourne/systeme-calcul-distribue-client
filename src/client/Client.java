@@ -226,6 +226,35 @@ public class Client
         }
     }
     
+    public boolean executionBinaire(File binaire, String args)
+    {
+        try 
+        {
+            Process p = Runtime.getRuntime().exec(binaire.getAbsolutePath()+ " "+ args);
+            p.waitFor();
+            BufferedReader sortie = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
+            
+            BufferedReader erreur = new BufferedReader(new InputStreamReader(p.getErrorStream(),"UTF-8"));
+            String ligne = "";
+            while ((ligne = sortie.readLine()) !=null)
+            {
+                System.out.println(ligne);
+            }
+            
+            while ((ligne = erreur.readLine()) !=null) 
+            {
+                System.out.println(ligne);
+            }
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+            return false;
+        } catch (InterruptedException ex) {
+            System.err.println(ex.getMessage());
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Méthode main du programme
      * @param args Arguments à ajouter pour le lancement du programme
@@ -233,25 +262,32 @@ public class Client
     public static void main(String[] args)
     {
         
-            Client c = new Client("192.168.0.102", 5000);
+            Client c = new Client("127.0.0.1", 5000);
             //Client c = new Client();
             if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
             else
                 System.out.println("Erreur lors de l'envoie du message");
+            
+            File f = new File("src/assets/experience/test_neurogrid/antnest");
+            //String arguments[] = {"1000","100","0"};
+            c.executionBinaire(f, "1000 100 0");
+            System.out.println("Executé");
+            
+            
             //File f = (File)c.lectureObjet();
-            File dest = new File("test.txt");
-            //System.out.println(f.toString());
-            if (dest.exists())
-                dest.delete();
-            try {
-                dest.createNewFile();
-            } catch (IOException e)
-            {
-                System.err.println(e.getMessage());
-            }
-            c.receptionFichier(c.socket, dest);
-            System.out.println("Reception done");
+//            File dest = new File("test.txt");
+//            //System.out.println(f.toString());
+//            if (dest.exists())
+//                dest.delete();
+//            try {
+//                dest.createNewFile();
+//            } catch (IOException e)
+//            {
+//                System.err.println(e.getMessage());
+//            }
+//            c.receptionFichier(c.socket, dest);
+//            System.out.println("Reception done");
             c.fermetureClient();
     }
 }
