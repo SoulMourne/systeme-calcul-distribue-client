@@ -201,6 +201,11 @@ public class Client
         return o; //Renvoie l'objet reçu par le socket
     }
 
+    /**
+     * Le client se met à l'écoute du socket et se prépare a recevoir et copier un fichier
+     * @param source le socket à écouter pour la reception du fichier
+     * @param fichier le fichier de destination
+     */
     public void receptionFichier(Socket source, File fichier)
     {
 
