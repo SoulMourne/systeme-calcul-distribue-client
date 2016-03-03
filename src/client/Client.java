@@ -208,26 +208,22 @@ public class Client
      */
     public void receptionFichier(Socket source, File fichier)
     {
-
-            InputStream entree = null;
-            OutputStream sortie = null;
-
-            try {
-                entree = socket.getInputStream();
-                sortie = new FileOutputStream(fichier);
-                byte[] bytes = new byte[16*1024];
-                int count;
-                while ((count = entree.read(bytes)) > 0) 
-                {
-                    sortie.write(bytes, 0, count);
-                }
-                entree.close();
-                sortie.close();
-            } catch (FileNotFoundException ex) {
-                System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
-            } catch (IOException ex) {
-                System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
+        try {
+           InputStream entree = socket.getInputStream();
+           OutputStream sortie = new FileOutputStream(fichier);
+            byte[] bytes = new byte[16*1024];
+            int count;
+            while ((count = entree.read(bytes)) > 0) 
+            {
+                sortie.write(bytes, 0, count);
             }
+            entree.close();
+            sortie.close();
+        } catch (FileNotFoundException ex) {
+            System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
+        }
     }
     
     /**
