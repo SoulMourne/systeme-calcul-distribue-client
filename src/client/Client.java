@@ -207,8 +207,7 @@ public class Client
      */
     public void receptionFichier(File fichier)
     {
-        //int fileSize = (int)this.lectureObjet();
-        //System.out.println(fileSize);
+        int fileSize = (int)this.lectureObjet();
         int byteSize = 16*1024;
         try {
             InputStream entree = socket.getInputStream();
@@ -218,12 +217,11 @@ public class Client
             while ((count = entree.read(bytes)) > 0) 
             {
                 sortie.write(bytes, 0, count);
-                /*long byteLeft = fileSize - count;
-                if (byteLeft < byteSize)
-                    bytes = new byte[(int)byteLeft];*/
+                fileSize -= count;
+                System.out.println(fileSize);
+                if (fileSize < byteSize)
+                    bytes = new byte[fileSize];
             }
-            entree.close();
-            sortie.close();
         } catch (FileNotFoundException ex) {
             System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
         } catch (IOException ex) {
@@ -247,14 +245,14 @@ public class Client
             
             //System.out.println((int)c.lectureObjet());
             
-            for (int i =0 ; i<10; i++)
+            /*for (int i =0 ; i<10; i++)
             { 
                 int j = (int)c.lectureObjet();
                 System.out.println(j);
-            }
+            }*/
 
             //File f = (File)c.lectureObjet();
-            /*File dest = new File("src/test.txt");
+            File dest = new File("src/assets/experience/test_neurogrid/antnest");
             //System.out.println(f.toString());
             if (dest.exists())
                 dest.delete();
@@ -266,6 +264,6 @@ public class Client
             }
             c.receptionFichier(dest);
             System.out.println("Reception done");
-            c.fermetureClient();*/
+            c.fermetureClient();
     }
 }
