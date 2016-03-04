@@ -243,16 +243,16 @@ public class Client
             if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
             else
-                System.out.println("Erreur lors de l'envoie du message");
+               System.out.println("Erreur lors de l'envoie du message");
             
             //System.out.println((int)c.lectureObjet());
             
             for (int i =0 ; i<10; i++)
-            {
+            { 
                 int j = (int)c.lectureObjet();
                 System.out.println(j);
             }
-            
+
             //File f = (File)c.lectureObjet();
             /*File dest = new File("src/test.txt");
             //System.out.println(f.toString());
