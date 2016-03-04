@@ -226,15 +226,21 @@ public class Client
         }
     }
     
-    public boolean executionBinaire(File binaire, String args)
+    public boolean executionBinaire(File binaire, String[] args)
     {
         try 
         {
-            Process p = Runtime.getRuntime().exec(binaire.getAbsolutePath()+ " "+ args);
-            p.waitFor();
-            BufferedReader sortie = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
+            //Récupération des arguments
+            String arguments = "";
+            for (String arg : args) 
+                arguments += arg + " ";
             
+            Process p = Runtime.getRuntime().exec(binaire.getAbsolutePath()+ " "+ arguments, null, binaire.getParentFile());
+            p.waitFor();
+            
+            BufferedReader sortie = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
             BufferedReader erreur = new BufferedReader(new InputStreamReader(p.getErrorStream(),"UTF-8"));
+            
             String ligne = "";
             while ((ligne = sortie.readLine()) !=null)
             {
@@ -243,12 +249,10 @@ public class Client
             
             while ((ligne = erreur.readLine()) !=null) 
             {
-                System.out.println(ligne);
+                System.err.println(ligne);
             }
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-            return false;
-        } catch (InterruptedException ex) {
+            
+        } catch (IOException | InterruptedException ex) {
             System.err.println(ex.getMessage());
             return false;
         }
@@ -269,10 +273,9 @@ public class Client
             else
                 System.out.println("Erreur lors de l'envoie du message");
             
-            File f = new File("src/assets/experience/test_neurogrid/antnest");
-            //String arguments[] = {"1000","100","0"};
-            c.executionBinaire(f, "1000 100 0");
-            System.out.println("Executé");
+            File f = new File("src/assets/experience/test_neurogrid/antnest");  //Fichier executable a lancerr
+            String arguments[] = {"1000","100","0"};    //Arguments à utiliser pour lancer l'exécutable
+            c.executionBinaire(f, arguments); //Execution de l'executable avec les arguments
             
             
             //File f = (File)c.lectureObjet();
