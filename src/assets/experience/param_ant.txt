@@ -1,0 +1,15 @@
+105 obs307-105-223
+541 work607-641-471-1009
+457 sleep617-647-457-1013
+167 siesta311-167-313
+-0.1 lif_tau
+0.0 lif_rest
+1.0 lif_thres
+-0.1 lif_reset
+0.1 qif_tau
+0.0 qif_rest
+1.0 qif_thres
+0.5 qif_vth
+0.55 qif_reset
+0.01 w_in0.018
+10   muexp

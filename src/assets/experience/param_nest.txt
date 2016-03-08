@@ -1,0 +1,8 @@
+0.2 p_connect
+0.01 w
+0.0    sigw0.01
+0.2    wmax
+0.01   ap
+-0.085 am
+16.8   taup
+33.7   taum
