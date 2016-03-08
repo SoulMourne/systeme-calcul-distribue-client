@@ -229,6 +229,39 @@ public class Client
         }
     }
     
+    public boolean executionBinaire(File binaire, String[] args)
+    {
+        try 
+        {
+            //Récupération des arguments
+            String arguments = "";
+            for (String arg : args) 
+                arguments += arg + " ";
+            
+            Process p = Runtime.getRuntime().exec(binaire.getAbsolutePath()+ " "+ arguments, null, binaire.getParentFile());
+            p.waitFor();
+            
+            BufferedReader sortie = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
+            BufferedReader erreur = new BufferedReader(new InputStreamReader(p.getErrorStream(),"UTF-8"));
+            
+            String ligne = "";
+            while ((ligne = sortie.readLine()) !=null)
+            {
+                System.out.println(ligne);
+            }
+            
+            while ((ligne = erreur.readLine()) !=null) 
+            {
+                System.err.println(ligne);
+            }
+            
+        } catch (IOException | InterruptedException ex) {
+            System.err.println(ex.getMessage());
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * Méthode main du programme
      * @param args Arguments à ajouter pour le lancement du programme
@@ -241,29 +274,26 @@ public class Client
             if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
             else
-               System.out.println("Erreur lors de l'envoie du message");
+                System.out.println("Erreur lors de l'envoie du message");
             
-            //System.out.println((int)c.lectureObjet());
+            File f = new File("src/assets/experience/antnest");  //Fichier executable a lancerr
+            String arguments[] = {"1000","100","0"};    //Arguments à utiliser pour lancer l'exécutable
+            c.executionBinaire(f, arguments); //Execution de l'executable avec les arguments
             
-            /*for (int i =0 ; i<10; i++)
-            { 
-                int j = (int)c.lectureObjet();
-                System.out.println(j);
-            }*/
-
+            
             //File f = (File)c.lectureObjet();
-            File dest = new File("src/assets/experience/test_neurogrid/antnest");
-            //System.out.println(f.toString());
-            if (dest.exists())
-                dest.delete();
-            try {
-                dest.createNewFile();
-            } catch (IOException e)
-            {
-                System.err.println(e.getMessage());
-            }
-            c.receptionFichier(dest);
-            System.out.println("Reception done");
+//            File dest = new File("test.txt");
+//            //System.out.println(f.toString());
+//            if (dest.exists())
+//                dest.delete();
+//            try {
+//                dest.createNewFile();
+//            } catch (IOException e)
+//            {
+//                System.err.println(e.getMessage());
+//            }
+//            c.receptionFichier(c.socket, dest);
+//            System.out.println("Reception done");
             c.fermetureClient();
     }
 }
