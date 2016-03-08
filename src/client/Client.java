@@ -218,14 +218,29 @@ public class Client
             {
                 sortie.write(bytes, 0, count);
                 fileSize -= count;
-                System.out.println(fileSize);
                 if (fileSize < byteSize)
                     bytes = new byte[fileSize];
             }
+            sortie.close();
         } catch (FileNotFoundException ex) {
             System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
         } catch (IOException ex) {
             System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
+        }
+    }
+    
+    public void setExecutable(File executable)
+    {
+        String cmd = "chmod +x "+executable.getAbsolutePath();
+        Process p;
+        try 
+        {
+            p = Runtime.getRuntime().exec(cmd);
+            p.waitFor();
+
+        } catch (IOException | InterruptedException ex) 
+        {
+            System.out.println(ex.getMessage());        
         }
     }
     
@@ -276,24 +291,23 @@ public class Client
             else
                 System.out.println("Erreur lors de l'envoie du message");
             
-            File f = new File("src/assets/experience/antnest");  //Fichier executable a lancerr
+            File dest = new File("src/assets/experience/antnest");
+            if (dest.exists())
+                dest.delete();
+            try {
+                dest.createNewFile();
+            } catch (IOException e)
+            {
+                System.err.println(e.getMessage());
+            }
+            c.receptionFichier(dest);
+            System.out.println("Reception done");
+            
+            c.setExecutable(dest);
+            
             String arguments[] = {"1000","100","0"};    //Arguments à utiliser pour lancer l'exécutable
-            c.executionBinaire(f, arguments); //Execution de l'executable avec les arguments
-            
-            
-            //File f = (File)c.lectureObjet();
-//            File dest = new File("test.txt");
-//            //System.out.println(f.toString());
-//            if (dest.exists())
-//                dest.delete();
-//            try {
-//                dest.createNewFile();
-//            } catch (IOException e)
-//            {
-//                System.err.println(e.getMessage());
-//            }
-//            c.receptionFichier(c.socket, dest);
-//            System.out.println("Reception done");
+            c.executionBinaire(dest, arguments); //Execution de l'executable avec les arguments
+
             c.fermetureClient();
     }
 }
