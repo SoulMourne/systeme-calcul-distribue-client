@@ -208,25 +208,28 @@ public class Client
     public void receptionFichier(File fichier)
     {
         int fileSize = (int)this.lectureObjet();
-        int byteSize = 16*1024;
-        try {
-            InputStream entree = socket.getInputStream();
-            OutputStream sortie = new FileOutputStream(fichier);
-            byte[] bytes = new byte[16*1024];
-            int count;
-            while ((count = entree.read(bytes)) > 0) 
-            {
-                sortie.write(bytes, 0, count);
-                fileSize -= count;
-                if (fileSize < byteSize)
-                    bytes = new byte[fileSize];
-            }
-            sortie.close();
-        } catch (FileNotFoundException ex) {
-            System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
-        } catch (IOException ex) {
-            System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
-        }
+        if (fileSize > 0)
+        {
+		    int byteSize = 16*1024;
+		    try {
+		        InputStream entree = socket.getInputStream();
+		        OutputStream sortie = new FileOutputStream(fichier);
+		        byte[] bytes = new byte[16*1024];
+		        int count;
+		        while ((count = entree.read(bytes)) > 0) 
+		        {
+		            sortie.write(bytes, 0, count);
+		            fileSize -= count;
+		            if (fileSize < byteSize)
+		                bytes = new byte[fileSize];
+		        }
+		        sortie.close();
+		    } catch (FileNotFoundException ex) {
+		        System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
+		    } catch (IOException ex) {
+		        System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
+		    }
+		}
     }
     
     public void setExecutable(File executable)
