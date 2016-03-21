@@ -160,7 +160,7 @@ public class Client
      */
     public int getPortServeur()
     {
-        String fileName = "conf.txt";
+        String fileName = "assets/conf.txt";
         String line = null;
 
         try {
