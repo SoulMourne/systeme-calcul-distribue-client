@@ -133,7 +133,7 @@ public class Client
      */
     public String getIPServeur()
     {
-        String fileName = "conf.txt";
+        String fileName = "assets/conf.txt";
         String line = null;
 
         try {
@@ -284,8 +284,8 @@ public class Client
     public static void main(String[] args)
     {
         
-            Client c = new Client("127.0.0.1", 5000);
-            //Client c = new Client();
+            //Client c = new Client("127.0.0.1", 5000);
+            Client c = new Client();
             if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
             else
