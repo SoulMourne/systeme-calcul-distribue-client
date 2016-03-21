@@ -291,7 +291,7 @@ public class Client
             else
                 System.out.println("Erreur lors de l'envoie du message");
             
-            File dest = new File("src/assets/experience/antnest");
+            File dest = new File("assets/experience/antnest");
             if (dest.exists())
                 dest.delete();
             try {
