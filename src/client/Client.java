@@ -201,28 +201,80 @@ public class Client
         return o; //Renvoie l'objet reçu par le socket
     }
 
-    public void receptionFichier(Socket source, File fichier)
+    /**
+     * Le client se met à l'écoute du socket et se prépare a recevoir et copier un fichier
+     * @param fichier le fichier de destination
+     */
+    public void receptionFichier(File fichier)
     {
-
-            InputStream entree = null;
-            OutputStream sortie = null;
-
-            try {
-                entree = socket.getInputStream();
-                sortie = new FileOutputStream(fichier);
-                byte[] bytes = new byte[16*1024];
-                int count;
-                while ((count = entree.read(bytes)) > 0) 
-                {
-                    sortie.write(bytes, 0, count);
-                }
-                entree.close();
-                sortie.close();
-            } catch (FileNotFoundException ex) {
-                System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
-            } catch (IOException ex) {
-                System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
+        int fileSize = (int)this.lectureObjet();
+        int byteSize = 16*1024;
+        try {
+            InputStream entree = socket.getInputStream();
+            OutputStream sortie = new FileOutputStream(fichier);
+            byte[] bytes = new byte[16*1024];
+            int count;
+            while ((count = entree.read(bytes)) > 0) 
+            {
+                sortie.write(bytes, 0, count);
+                fileSize -= count;
+                if (fileSize < byteSize)
+                    bytes = new byte[fileSize];
             }
+            sortie.close();
+        } catch (FileNotFoundException ex) {
+            System.err.println("Reception Fichier FileNotFoundException : " + ex.getMessage());
+        } catch (IOException ex) {
+            System.err.println("Reception Fichier IOEsception : " + ex.getMessage());
+        }
+    }
+    
+    public void setExecutable(File executable)
+    {
+        String cmd = "chmod +x "+executable.getAbsolutePath();
+        Process p;
+        try 
+        {
+            p = Runtime.getRuntime().exec(cmd);
+            p.waitFor();
+
+        } catch (IOException | InterruptedException ex) 
+        {
+            System.out.println(ex.getMessage());        
+        }
+    }
+    
+    public boolean executionBinaire(File binaire, String[] args)
+    {
+        try 
+        {
+            //Récupération des arguments
+            String arguments = "";
+            for (String arg : args) 
+                arguments += arg + " ";
+            
+            Process p = Runtime.getRuntime().exec(binaire.getAbsolutePath()+ " "+ arguments, null, binaire.getParentFile());
+            p.waitFor();
+            
+            BufferedReader sortie = new BufferedReader(new InputStreamReader(p.getInputStream(),"UTF-8"));
+            BufferedReader erreur = new BufferedReader(new InputStreamReader(p.getErrorStream(),"UTF-8"));
+            
+            String ligne = "";
+            while ((ligne = sortie.readLine()) !=null)
+            {
+                System.out.println(ligne);
+            }
+            
+            while ((ligne = erreur.readLine()) !=null) 
+            {
+                System.err.println(ligne);
+            }
+            
+        } catch (IOException | InterruptedException ex) {
+            System.err.println(ex.getMessage());
+            return false;
+        }
+        return true;
     }
     
     /**
@@ -232,15 +284,14 @@ public class Client
     public static void main(String[] args)
     {
         
-            Client c = new Client("192.168.0.102", 5000);
+            Client c = new Client("127.0.0.1", 5000);
             //Client c = new Client();
             if (c.envoiMessage("Bonjour, je suis un client."))
                 System.out.println("Message du serveur : " + c.lectureMessage());
             else
                 System.out.println("Erreur lors de l'envoie du message");
-            //File f = (File)c.lectureObjet();
-            File dest = new File("test.txt");
-            //System.out.println(f.toString());
+            
+            File dest = new File("src/assets/experience/antnest");
             if (dest.exists())
                 dest.delete();
             try {
@@ -249,8 +300,14 @@ public class Client
             {
                 System.err.println(e.getMessage());
             }
-            c.receptionFichier(c.socket, dest);
+            c.receptionFichier(dest);
             System.out.println("Reception done");
+            
+            c.setExecutable(dest);
+            
+            String arguments[] = {"1000","100","0"};    //Arguments à utiliser pour lancer l'exécutable
+            c.executionBinaire(dest, arguments); //Execution de l'executable avec les arguments
+
             c.fermetureClient();
     }
 }
